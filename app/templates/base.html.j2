@@ -1,0 +1,99 @@
+{%- set U = palette.upper -%}
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}{{ b.name }} — Online Sipariş{% endblock %}</title>
+<meta name="description" content="{% block desc %}{{ b.tagline or b.description or (b.name ~ ' online sipariş') }}{% endblock %}">
+<meta name="theme-color" content="{{ palette.hero }}">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.desc() }}">
+<meta property="og:type" content="website">
+{% if b.hero_image %}<meta property="og:image" content="{{ b.hero_image }}">{% endif %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?{{ palette.fonts }}&display=swap" rel="stylesheet">
+<script type="application/ld+json">{{ schema_json|safe }}</script>
+<style>
+:root{
+  --primary:{{ b.theme.primary }};--accent:{{ b.theme.accent }};
+  --bg:{{ palette.bg }};--surface:{{ palette.surface }};--surface2:{{ palette.surface2 }};
+  --text:{{ palette.text }};--muted:{{ palette.muted }};--line:{{ palette.line }};
+  --hero:{{ palette.hero }};--hero-text:{{ palette.hero_text }};
+  --display:{{ palette.display }};--body:{{ palette.body }};
+  --wa:#25d366;--r:16px;--r-sm:10px;
+  --shadow:0 1px 2px rgba(0,0,0,.06),0 8px 24px -12px rgba(0,0,0,.18);
+}
+</style>
+<link rel="stylesheet" href="site.css">
+</head>
+<body class="page-{{ page }}">
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="index.html"><span class="mark">{{ b.name[:1] }}</span><span>{{ b.name }}<small>Online sipariş</small></span></a>
+    <nav class="topnav">
+      <a href="index.html" {% if page=='index' %}class="on"{% endif %}>Ana Sayfa</a>
+      <a href="menu.html" {% if page=='menu' %}class="on"{% endif %}>Menü</a>
+      <a href="hakkimizda.html" {% if page=='hakkimizda' %}class="on"{% endif %}>Hakkımızda</a>
+      <a href="iletisim.html" {% if page=='iletisim' %}class="on"{% endif %}>İletişim</a>
+    </nav>
+    <div class="actions">
+      {% if b.phone %}<a class="btn sm phone-txt" style="background:var(--surface2);color:var(--text)" href="tel:{{ b.phone }}">📞 {{ b.phone }}</a>{% endif %}
+      <a class="btn sm order-btn" href="menu.html">Sipariş Ver</a>
+      <button class="iconbtn" onclick="openCart()" aria-label="Sepet">🛒<span class="n" id="cartn">0</span></button>
+      <button class="iconbtn burger" onclick="document.body.classList.toggle('navopen')" aria-label="Menü">☰</button>
+    </div>
+  </div>
+  <nav class="mobnav">
+    <a href="index.html">Ana Sayfa</a><a href="menu.html">Menü</a><a href="hakkimizda.html">Hakkımızda</a><a href="iletisim.html">İletişim</a>
+  </nav>
+</header>
+
+{% block body %}{% endblock %}
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div><div class="logo" style="margin-bottom:8px"><span class="mark">{{ b.name[:1] }}</span>{{ b.name }}</div>
+        <p>{{ b.tagline }}</p>
+        {% if b.platforms %}<div class="fl">{% for p in b.platforms %}<a href="{{ b.source_url if 'yemeksepeti' in p|lower and b.source_url else '#' }}">{{ p }}</a>{% endfor %}</div>{% endif %}</div>
+      <div><h5>Sayfalar</h5><ul><li><a href="index.html">Ana Sayfa</a></li><li><a href="menu.html">Menü</a></li><li><a href="hakkimizda.html">Hakkımızda</a></li><li><a href="iletisim.html">İletişim</a></li></ul></div>
+      <div><h5>İletişim</h5><p>{{ b.address }}</p>{% if b.phone %}<p><a href="tel:{{ b.phone }}">{{ b.phone }}</a></p>{% endif %}{% if wa %}<p><a href="https://wa.me/{{ wa }}">WhatsApp</a></p>{% endif %}{% if b.instagram %}<p><a href="{{ b.instagram if 'http' in b.instagram else 'https://instagram.com/' ~ b.instagram|replace('@','') }}" target="_blank" rel="noopener">Instagram</a></p>{% endif %}</div>
+      <div><h5>Saatler</h5><ul>{% for h in b.hours %}<li>{{ h }}</li>{% endfor %}</ul></div>
+    </div>
+    <div class="bottom"><span>© {{ b.name }}. Fiyatlar değişiklik gösterebilir.</span><span>Bu site <a href="{{ brand.url }}" style="text-decoration:underline">{{ brand.name }}</a> ile üretildi.</span></div>
+  </div>
+</footer>
+
+{% if wa %}<a class="wafab" href="https://wa.me/{{ wa }}" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>{% endif %}
+<div id="bar"><div class="l"><b id="barTot"></b><span id="barN"></span></div><button onclick="openCart()">Sepeti Gör →</button></div>
+<div class="toast" id="toast"></div>
+<div id="dim" onclick="closeCart()"></div>
+<aside id="drawer" aria-label="Sepet">
+  <header><h3 class="display{% if U %} upper{% endif %}">Sepetin</h3><button class="x" onclick="closeCart()">✕</button></header>
+  <div class="scroll">
+    <div id="lines"></div>
+    <div class="sum"><div><span>Ara toplam</span><span id="sub"></span></div>{% if b.delivery_fee %}<div id="delRow"><span>Teslimat</span><span>{{ "%.0f"|format(b.delivery_fee) }} ₺</span></div>{% endif %}<div class="g"><span>Toplam</span><span id="grand"></span></div></div>
+    <div class="form">
+      <label>Teslimat</label>
+      <div class="seg"><label><input type="radio" name="mode" value="Adrese teslim" checked onchange="modeChg()">🛵 Adrese teslim</label><label><input type="radio" name="mode" value="Gel-al" onchange="modeChg()">🏃 Gel-al</label></div>
+      <label>Ad Soyad</label><input id="f-name" placeholder="Adınız" autocomplete="name">
+      <label>Telefon</label><input id="f-phone" placeholder="05xx xxx xx xx" inputmode="tel" autocomplete="tel">
+      <div id="addrWrap"><label>Adres</label><textarea id="f-addr" rows="2" placeholder="Mahalle, sokak, bina, daire, tarif"></textarea></div>
+      <label>Ödeme</label>
+      <div class="seg">{% for pm in b.payment_methods %}<label><input type="radio" name="pay" value="{{ pm }}" {% if loop.first %}checked{% endif %}>{{ pm }}</label>{% endfor %}</div>
+      <label>Sipariş notu</label><input id="f-note" placeholder="Acısız olsun, zili çalmayın…">
+    </div>
+  </div>
+  <footer><button id="send" onclick="sendWA()">WhatsApp'tan Sipariş Ver <span>→</span></button><p class="fine">Sipariş özeti WhatsApp'ta hazır mesaj olarak açılır; gönder'e siz basarsınız. Bilgileriniz üçüncü tarafa gitmez.</p></footer>
+</aside>
+
+<script>
+window.SITE={wa:"{{ wa }}",min:{{ b.min_order or 0 }},fee:{{ b.delivery_fee or 0 }},key:"cart_{{ b.slug }}",name:{{ b.name|tojson }},hours:{{ b.hours|tojson }},
+items:{{ catalog|tojson }}};
+</script>
+<script src="site.js"></script>
+</body>
+</html>

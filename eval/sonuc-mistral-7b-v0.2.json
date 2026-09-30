@@ -1,0 +1,62 @@
+[
+ {
+  "beklenen": 18,
+  "bulunan": 18,
+  "fiyat_dogru": 18,
+  "fazla": 0,
+  "recall": 1.0,
+  "fiyat_isabet": 1.0,
+  "ornek": "burger",
+  "sure_sn": 5.0
+ },
+ {
+  "beklenen": 18,
+  "bulunan": 18,
+  "fiyat_dogru": 18,
+  "fazla": 0,
+  "recall": 1.0,
+  "fiyat_isabet": 1.0,
+  "ornek": "burger",
+  "sure_sn": 4.6
+ },
+ {
+  "beklenen": 18,
+  "bulunan": 18,
+  "fiyat_dogru": 18,
+  "fazla": 0,
+  "recall": 1.0,
+  "fiyat_isabet": 1.0,
+  "ornek": "burger",
+  "sure_sn": 4.6
+ },
+ {
+  "beklenen": 20,
+  "bulunan": 18,
+  "fiyat_dogru": 17,
+  "fazla": 3,
+  "recall": 0.9,
+  "fiyat_isabet": 0.94,
+  "ornek": "kasap",
+  "sure_sn": 4.4
+ },
+ {
+  "beklenen": 20,
+  "bulunan": 16,
+  "fiyat_dogru": 15,
+  "fazla": 3,
+  "recall": 0.8,
+  "fiyat_isabet": 0.94,
+  "ornek": "kasap",
+  "sure_sn": 4.3
+ },
+ {
+  "beklenen": 20,
+  "bulunan": 18,
+  "fiyat_dogru": 17,
+  "fazla": 3,
+  "recall": 0.9,
+  "fiyat_isabet": 0.94,
+  "ornek": "kasap",
+  "sure_sn": 5.5
+ }
+]

@@ -1,0 +1,91 @@
+{% extends "base.html.j2" %}
+{% set page = "index" %}
+{% block body %}
+<section class="hero" id="top">
+  {% if b.hero_image %}<div class="bgimg" style="background-image:url('{{ b.hero_image }}')"></div>
+  {% else %}<div class="bgart" style="--pattern:url(&quot;data:image/svg+xml;utf8,{{ pattern_svg|urlencode }}&quot;)"></div>{% endif %}
+  <div class="shade"></div>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Paket servis{% if b.delivery_time %} · {{ b.delivery_time }}{% endif %}</span>{% if b.rating %}<span class="rating">★ {{ b.rating }}</span>{% endif %}
+      <h1 class="display{% if U %} upper{% endif %}">{{ b.tagline or b.name }}</h1>
+      <p class="lead">{{ b.description or (b.name ~ ' lezzetini kendi sitemizden hızlıca sipariş verin.') }}</p>
+      <div class="cta">
+        <a class="btn lg" href="menu.html">Sipariş Ver →</a>
+        {% if wa %}<a class="btn lg ghost" href="https://wa.me/{{ wa }}" target="_blank" rel="noopener">WhatsApp'tan yaz</a>{% endif %}
+      </div>
+      <div class="facts">
+        {% if b.address %}<span>📍 {{ b.address }}</span>{% endif %}
+        {% for h in b.hours[:2] %}<span>🕒 {{ h }}</span>{% endfor %}
+      </div>
+    </div>
+    <div>
+      <a class="promo" href="menu.html">
+        <div>
+          <span class="tag">{{ 'Kampanya' if b.promo else 'Komisyonsuz' }}</span>
+          <h2 class="display{% if U %} upper{% endif %}">{{ b.promo if b.promo else 'Online Sipariş' }}</h2>
+          <p>{% if b.promo %}Kendi sitemizden verilen siparişlerde geçerlidir.{% else %}Aracı yok, komisyon yok. Sepetini doldur, WhatsApp'tan onayla.{% endif %}</p>
+        </div>
+        <span class="go">→</span>
+      </a>
+      <div class="notice"><span class="dot"></span><span>Yemek platformlarında platform komisyonları fiyatlara yansır. Kendi sitemizden verilen siparişlerde komisyon yoktur{% if b.delivery_fee %}; yalnızca {{ "%.0f"|format(b.delivery_fee) }} ₺ kurye ücreti eklenir{% endif %}.</span></div>
+      <div class="plats">
+        <h4>Sipariş kanalları</h4>
+        <a class="own" href="menu.html"><span class="pi" style="background:var(--primary)">{{ b.name[:1] }}</span>{{ b.name }} · kendi sitemiz <span class="ext">→</span></a>
+        {% for p in b.platforms %}<a href="{{ b.source_url if 'yemeksepeti' in p|lower and b.source_url else '#' }}" {% if b.source_url %}target="_blank" rel="noopener"{% endif %}><span class="pi" style="background:{{ p|pcolor }}">{{ p[:1] }}</span>{{ p }}<span class="ext">↗</span></a>{% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="status wrap">
+  <div class="card">
+    <b><span class="pill" id="pill"></span><span id="openTxt">Sipariş verebilirsiniz</span></b>
+    {% if b.hours %}<span>Bugün: {{ b.hours[0] }}</span>{% endif %}
+    {% if b.min_order %}<span>Min. sipariş {{ "%.0f"|format(b.min_order) }} ₺</span>{% endif %}
+    {% if b.delivery_fee is not none %}<span>Teslimat {% if b.delivery_fee %}{{ "%.0f"|format(b.delivery_fee) }} ₺{% else %}ücretsiz{% endif %}</span>{% endif %}
+    <span>{{ b.payment_methods|join(' · ') }}</span>
+  </div>
+</div>
+
+{% if featured %}
+<section class="sec wrap">
+  <div class="head"><div><h2 class="display{% if U %} upper{% endif %}">Öne çıkanlar</h2><p>En çok sipariş edilenler ve imza lezzetler</p></div><a class="more" href="menu.html">Tüm menü →</a></div>
+  <div class="featured">
+    {% for f in featured %}
+    <article class="fcard" data-key="{{ f.key }}">
+      <div class="ph">{% if f.item.image %}<img src="{{ f.item.image }}" alt="{{ f.item.name }}" loading="lazy">{% else %}{{ f.icon }}{% endif %}</div>
+      <div class="bd">
+        <h4>{{ f.item.name }}{% if f.item.portion %} <small style="font-weight:600;color:var(--muted);font-size:12px">{{ f.item.portion }}</small>{% endif %}</h4>
+        {% if f.item.description %}<p>{{ f.item.description }}</p>{% endif %}
+        <div class="foot"><span class="price">{% if f.item.old_price and f.item.old_price > f.item.price %}<s>{{ "%.0f"|format(f.item.old_price) }} ₺</s>{% endif %}{{ "%.0f"|format(f.item.price) }} ₺</span>
+          <button class="add" onclick="add({{ f.key|tojson|forceescape }})">Ekle</button>
+          <span class="qtyc"><button onclick="chg({{ f.key|tojson|forceescape }},-1)">−</button><b>1</b><button onclick="chg({{ f.key|tojson|forceescape }},1)">+</button></span></div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="sec wrap">
+  <div class="head"><div><h2 class="display{% if U %} upper{% endif %}">Menü</h2><p>{{ menu.categories|length }} kategori · {{ item_count }} ürün</p></div></div>
+  <div class="cats-grid">
+    {% for c in menu.categories %}<a href="menu.html#c{{ loop.index }}"><span class="em">{{ c.icon }}</span><b>{{ c.name }}</b><span>{{ c.items|length }} ürün</span></a>{% endfor %}
+  </div>
+</section>
+
+<section class="sec wrap" id="teslimat">
+  <div class="head"><div><h2 class="display{% if U %} upper{% endif %}">Neden bizden?</h2></div></div>
+  <div class="why">
+    <div class="ibox"><div class="ic">💸</div><h4>Komisyon yok</h4><p>Platform komisyonu fiyatına yansımaz. Aynı lezzet, daha uygun fiyat.</p></div>
+    <div class="ibox"><div class="ic">🛵</div><h4>Teslimat</h4><p>{{ b.delivery_note or 'Paket servis ve gel-al seçenekleri mevcuttur.' }}{% if b.min_order %} Minimum sipariş {{ "%.0f"|format(b.min_order) }} ₺.{% endif %}</p></div>
+    <div class="ibox"><div class="ic">💳</div><h4>Ödeme</h4><ul>{% for pm in b.payment_methods %}<li>{{ pm }}</li>{% endfor %}</ul></div>
+  </div>
+</section>
+
+<div class="wrap"><div class="cta-band">
+  <div><h3 class="display{% if U %} upper{% endif %}">Sipariş vermeye hazır mısın?</h3><p>Sepetini doldur, WhatsApp'tan tek dokunuşla onayla.</p></div>
+  <a class="btn lg" href="menu.html">Menüye git →</a>
+</div></div>
+{% endblock %}

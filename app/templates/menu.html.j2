@@ -1,0 +1,57 @@
+{% extends "base.html.j2" %}
+{% set page = "menu" %}
+{% block title %}Menü — {{ b.name }}{% endblock %}
+{% block body %}
+<section class="hero compact">
+  {% if b.hero_image %}<div class="bgimg" style="background-image:url('{{ b.hero_image }}')"></div>{% else %}<div class="bgart" style="--pattern:url(&quot;data:image/svg+xml;utf8,{{ pattern_svg|urlencode }}&quot;)"></div>{% endif %}
+  <div class="shade"></div>
+  <div class="wrap"><div>
+    <span class="eyebrow">Online sipariş</span>
+    <h1 class="display{% if U %} upper{% endif %}">Menü</h1>
+    <p class="lead">{{ menu.categories|length }} kategori · {{ item_count }} ürün · fiyatlar KDV dahil{% if b.promo %} · <b>{{ b.promo }}</b>{% endif %}</p>
+  </div></div>
+</section>
+
+<div class="status wrap">
+  <div class="card">
+    <b><span class="pill" id="pill"></span><span id="openTxt">Sipariş verebilirsiniz</span></b>
+    {% if b.hours %}<span>Bugün: {{ b.hours[0] }}</span>{% endif %}
+    {% if b.min_order %}<span>Min. sipariş {{ "%.0f"|format(b.min_order) }} ₺</span>{% endif %}
+    {% if b.delivery_fee is not none %}<span>Teslimat {% if b.delivery_fee %}{{ "%.0f"|format(b.delivery_fee) }} ₺{% else %}ücretsiz{% endif %}</span>{% endif %}
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="menuhead">
+    <div class="search"><input id="q" type="search" placeholder="Menüde ara…" autocomplete="off"></div>
+  </div>
+  <nav class="cats"><div class="row" id="catrow">
+    {% for c in menu.categories %}<a href="#c{{ loop.index }}">{{ c.icon }} {{ c.name }}</a>{% endfor %}
+  </div></nav>
+
+  {% for c in menu.categories %}
+  <section class="cat" id="c{{ loop.index }}">
+    <h3 class="display{% if U %} upper{% endif %}">{{ c.icon }} {{ c.name }} <small>{{ c.items|length }}</small></h3>
+    <div class="grid">
+    {% for it in c.items %}
+      {% set key = (c.name ~ '|' ~ it.name) %}
+      <article class="item" data-key="{{ key }}" data-q="{{ (it.name ~ ' ' ~ it.description ~ ' ' ~ c.name)|lower }}">
+        <div class="thumb">{% if it.image %}<img src="{{ it.image }}" alt="{{ it.name }}" loading="lazy">{% else %}{{ c.icon }}{% endif %}</div>
+        <div class="body">
+          <h4>{{ it.name }}{% if it.portion %}<small>{{ it.portion }}</small>{% endif %}</h4>
+          {% if it.description %}<p>{{ it.description }}</p>{% endif %}
+          {% if it.tags %}<div class="tags">{% for t in it.tags %}<span class="{% if 'ac' in t|lower %}hot{% elif 'vej' in t|lower or 'vegan' in t|lower %}veg{% elif 'pop' in t|lower or 'imza' in t|lower or 'imza' in t|lower %}pop{% endif %}">{{ t }}</span>{% endfor %}</div>{% endif %}
+          <div class="foot">
+            <span class="price">{% if it.old_price and it.old_price > it.price %}<s>{{ "%.0f"|format(it.old_price) }} ₺</s>{% endif %}{{ "%.0f"|format(it.price) }} ₺</span>
+            <button class="add" onclick="add({{ key|tojson|forceescape }})">Ekle</button>
+            <span class="qtyc"><button onclick="chg({{ key|tojson|forceescape }},-1)">−</button><b>1</b><button onclick="chg({{ key|tojson|forceescape }},1)">+</button></span>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+  <p class="empty" id="noRes" hidden>Aramanla eşleşen ürün yok.</p>
+</main>
+{% endblock %}

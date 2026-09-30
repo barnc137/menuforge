@@ -1,0 +1,41 @@
+{% extends "base.html.j2" %}
+{% set page = "hakkimizda" %}
+{% block title %}Hakkımızda — {{ b.name }}{% endblock %}
+{% block body %}
+<section class="hero compact">
+  {% if b.hero_image %}<div class="bgimg" style="background-image:url('{{ b.hero_image }}')"></div>{% else %}<div class="bgart" style="--pattern:url(&quot;data:image/svg+xml;utf8,{{ pattern_svg|urlencode }}&quot;)"></div>{% endif %}
+  <div class="shade"></div>
+  <div class="wrap"><div>
+    <span class="eyebrow">Hakkımızda</span>
+    <h1 class="display{% if U %} upper{% endif %}">{{ b.name }}</h1>
+    {% if b.tagline %}<p class="lead">{{ b.tagline }}</p>{% endif %}
+  </div></div>
+</section>
+
+<section class="about wrap" style="padding-top:48px">
+  <div>
+    <h2 class="display{% if U %} upper{% endif %}">Hikâyemiz</h2>
+    <p>{{ b.about or b.description or (b.name ~ ', ' ~ (b.cuisine or 'lezzet') ~ ' üzerine kurulu bir işletme. Sipariş için menümüze göz atın.') }}</p>
+    <div class="stats">
+      <div><b>{{ item_count }}</b><span>ürün</span></div>
+      <div><b>{{ menu.categories|length }}</b><span>kategori</span></div>
+      {% if b.rating %}<div><b>★ {{ b.rating.split(' ')[0] }}</b><span>{{ b.rating.split(' ',1)[1] if ' ' in b.rating else 'puan' }}</span></div>{% endif %}
+      {% if b.platforms %}<div><b>{{ b.platforms|length + 1 }}</b><span>sipariş kanalı</span></div>{% endif %}
+    </div>
+  </div>
+  <div class="photo">{% if b.hero_image %}<img src="{{ b.hero_image }}" alt="{{ b.name }}">{% else %}{{ menu.categories[0].icon if menu.categories else '🍽️' }}{% endif %}</div>
+</section>
+
+<section class="sec wrap" style="padding-top:20px">
+  <div class="why">
+    <div class="ibox"><div class="ic">🕒</div><h4>Çalışma saatleri</h4>{% if b.hours %}<ul>{% for h in b.hours %}<li>{{ h }}</li>{% endfor %}</ul>{% else %}<p>Bilgi için arayın.</p>{% endif %}</div>
+    <div class="ibox"><div class="ic">🛵</div><h4>Teslimat</h4><p>{{ b.delivery_note or 'Paket servis ve gel-al seçenekleri mevcuttur.' }}{% if b.delivery_time %} Ortalama süre {{ b.delivery_time }}.{% endif %}</p></div>
+    <div class="ibox"><div class="ic">📍</div><h4>Adres</h4><p>{{ b.address or '—' }}</p>{% if b.maps_url %}<p style="margin-top:8px"><a href="{{ b.maps_url }}" target="_blank" rel="noopener" style="color:var(--primary);font-weight:700">Yol tarifi →</a></p>{% endif %}</div>
+  </div>
+</section>
+
+<div class="wrap"><div class="cta-band">
+  <div><h3 class="display{% if U %} upper{% endif %}">Lezzeti kapına getirelim</h3><p>Komisyonsuz, doğrudan bizden.</p></div>
+  <a class="btn lg" href="menu.html">Sipariş Ver →</a>
+</div></div>
+{% endblock %}

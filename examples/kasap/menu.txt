@@ -1,0 +1,26 @@
+Kasap Reyonu (kg fiyatı)
+Dana Kuşbaşı 720
+Dana Kıyma 690
+Dana Antrikot 980
+Dana Bonfile 1.250
+Kuzu Pirzola 1.100
+Kuzu Kaburga 850
+Kuzu Kol 790
+Ev Yapımı Sucuk 650
+Dana Kavurma 1.400
+Köftelik Kıyma (baharatlı hazır) 720
+
+Izgara (porsiyon)
+Izgara Köfte 8 adet, pilav, közlenmiş biber-domates 320
+Kuzu Pirzola Porsiyon 5 adet 520
+Antrikot Izgara 250 gr 480
+Karışık Izgara köfte, pirzola, kanat, kuşbaşı 560
+Tavuk Kanat 12 adet 260
+Kaburga Kaşarlı Sucuk 240
+
+Yanında
+Lavaş, salata, közleme her porsiyona dahil
+Çoban Salata 80
+Ayran 1 lt 60
+Şalgam 40
+Künefe 150

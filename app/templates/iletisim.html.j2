@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% set page = "iletisim" %}
+{% block title %}İletişim — {{ b.name }}{% endblock %}
+{% block body %}
+<section class="hero compact">
+  {% if b.hero_image %}<div class="bgimg" style="background-image:url('{{ b.hero_image }}')"></div>{% else %}<div class="bgart" style="--pattern:url(&quot;data:image/svg+xml;utf8,{{ pattern_svg|urlencode }}&quot;)"></div>{% endif %}
+  <div class="shade"></div>
+  <div class="wrap"><div>
+    <span class="eyebrow">İletişim</span>
+    <h1 class="display{% if U %} upper{% endif %}">Bize ulaşın</h1>
+    <p class="lead">Sipariş, rezervasyon ve sorularınız için tek dokunuş yeter.</p>
+  </div></div>
+</section>
+
+<section class="contact wrap" style="padding-top:48px">
+  <div class="list">
+    {% if wa %}<a href="https://wa.me/{{ wa }}" target="_blank" rel="noopener"><span class="ic">💬</span><span>WhatsApp<small>Sipariş ve soru için en hızlı yol</small></span></a>{% endif %}
+    {% if b.phone %}<a href="tel:{{ b.phone }}"><span class="ic">📞</span><span>{{ b.phone }}<small>Telefonla sipariş</small></span></a>{% endif %}
+    {% if b.address %}<a href="{{ b.maps_url or ('https://www.google.com/maps/search/?api=1&query=' ~ (b.name ~ ' ' ~ b.address)|urlencode) }}" target="_blank" rel="noopener"><span class="ic">📍</span><span>{{ b.address }}<small>Yol tarifi al</small></span></a>{% endif %}
+    {% if b.instagram %}<a href="{{ b.instagram if 'http' in b.instagram else 'https://instagram.com/' ~ b.instagram|replace('@','') }}" target="_blank" rel="noopener"><span class="ic">📷</span><span>Instagram<small>Güncel kampanyalar ve fotoğraflar</small></span></a>{% endif %}
+    {% if b.hours %}<a href="#" onclick="return false"><span class="ic">🕒</span><span>Çalışma saatleri<small>{{ b.hours|join(' · ') }}</small></span></a>{% endif %}
+    {% for p in b.platforms %}<a href="{{ b.source_url if 'yemeksepeti' in p|lower and b.source_url else '#' }}" {% if b.source_url %}target="_blank" rel="noopener"{% endif %}><span class="ic" style="background:{{ p|pcolor }};color:#fff">{{ p[:1] }}</span><span>{{ p }}<small>Platform üzerinden sipariş</small></span></a>{% endfor %}
+  </div>
+  <div class="map">{% if b.address %}<iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q={{ (b.name ~ ' ' ~ b.address)|urlencode }}&z=15&output=embed" title="Harita"></iframe>{% endif %}</div>
+</section>
+
+<div class="wrap"><div class="cta-band">
+  <div><h3 class="display{% if U %} upper{% endif %}">Şimdi sipariş ver</h3><p>Sepetini doldur, WhatsApp'tan onayla.</p></div>
+  <a class="btn lg" href="menu.html">Menüye git →</a>
+</div></div>
+{% endblock %}
